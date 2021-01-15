@@ -1,0 +1,907 @@
+https://gist.github.com/kenmori/1961ce0140dc3307a0e641c8dde6701dを使用させて頂いています
+問1
+
+const a = { a: 'a' }とconst b = { b: 'b' } をマージしたc を出力してください e.g{ a:'a', b:'b' }
+
+const a = { a: 'a' };
+const b = { b:'b'};
+const c = Object.assign({}, a, b);
+c //{a: 'a', b: 'b'}
+
+//Object.assign(target, ...sources)
+//・戻り値はtargetオブジェクト
+//・sourcesオブジェクトの列挙可能で自分が所有するプロパティのみtargetにコピーされる
+//・prototypeに定義し直したい場合、Object.getOwnPropertyDescriptorとObject.definePropertyを使う
+//・プロパティが書き込み不可の場合TypeErrorが発生。targetオブジェクトは変更されない
+//・Object.assignはsources値がnull、undefinedの場合例外を投げない
+
+別解
+const c = {...a, ...b}
+問2
+３、
+const arry = ['aa','bb','cc','dd','ee','ff','gg'];
+のdd,ee,ffを新たな配列として返してください
+
+const newArry = arry.slice(-4,-1);
+//or
+const newArry = arry.slice(3,-1);
+問3
+
+['a','b’] の要素をconsole出力してください e.g 'a'と'b'
+
+const arry = ['a','b'];
+arry.forEach(function(elem,i){
+ console.log(elem)
+})
+//'a'
+//'b'
+問4
+
+['a', 'b']の各要素にindex値を足した文字列を出力してくださいe.g 'a0'と'b1'
+
+const arry = ['a','b'];
+arry.forEach(function(ele,i){
+ console.log(ele + i)
+})
+//'a0'
+//'b1'
+問5
+
+任意の変数名の[1,2]を定義して配列かどうかを評価してください e.g true
+
+Array.isArray(arry) //true
+//arry instanceof Array //true
+//instanceof比較は継承しているオブジェクトのインスタンス比較なので
+// aryy instanceof Objectでもtrueが返ってくる
+問6 こちら
+
+//1
+if (typeof x === 'undefined') {
+ ???
+}
+
+//2
+if(x === undefined){
+ ???
+}
+変数xが定義されていない場合上の1、2は実行されますか?
+
+//1は実行される
+//2は実行されない(ReferenceError)
+
+//typeofは変数が存在しない場合エラーは投げない。
+//ただこのような値の存在チェックは避けるべき
+//グローバル上の値のチェックはfor in
+問7
+
+こちら
+
+//1
+let x;
+if (x === void 0) {
+}
+
+//2
+// 直前まで y は宣言されていない
+if (y === void 0) {
+}
+1,2はそれぞれ実行されますか
+
+//1は宣言はされているが値が割り当てられていない場合です。
+//実行される
+
+
+//2は宣言されていない場合です。
+//実行されない
+
+//void 0 は確実にundefindeを返すことが保証されています
+//undefinedはただのglobal変数なので
+undefined = "foo";
+undefined;
+//'foo'
+で代入でき、保証はされていない
+
+e.g:
+undefined = 1;
+console.log(!!undefined); //true
+console.log(!!void(0)); //false
+
+問8
+
+下記
+
+const obj = {
+ key: 'aa',
+ key2: 'bb'
+}
+の中のkeyとvalueを自身のプロパティのみ全て出力しなさい
+
+const obj = {
+ key: 'aa',
+ key2: 'bb'
+}
+for (key in obj){
+ if(obj.hasOwnProperty(key)){
+   console.log(key, obj[key])
+  }
+}
+//key aa
+//key2 bb
+
+//or use Object.values, Object.keys
+問9
+
+こちらの ['a', 'b', 'c'] 配列の中の全ての要素を結合し、1つの文字列として出力してください。
+
+const array = ['a', 'b', 'c'];
+array.join("");
+//'abc'
+
+//other
+const array = ['a', 'b', 'c'];
+let str = '';
+const count = array.length;
+for(var i= 0; i < count; i++){
+  str += array[i];
+}
+str
+//'abc'
+問10
+
+こちら
+
+x = 43
+let y = 3
+の2つの変数。deleteできるのはどちらですか？
+
+deleteは暗黙に定義された場合は変数は削除できるが、
+var(let) や function文中の変数はnon-configurableであり削除できない
+
+//globaleオブジェクト
+x = 43;
+delete x 
+//true //暗黙に定義されたglobale変数なので
+
+//var宣言
+delete y
+false //削除できない
+
+//関数宣言文の中でのdelete
+function f(){
+ var z = 44;
+ delete z;
+ console.log(z)
+}
+f()
+//44 //削除されていない
+
+【配列の要素の削除】
+1
+let color = ['red', 'blue', 'green'];
+//要素として存在する状態にするが値は未定義
+color[1]= undefined;
+color
+//["red", undefined, "green"]
+if(1 in color){console.log('実行されてます')}
+//実行されてます
+
+2
+let color = ['red', 'blue', 'green'];
+delete color[1]
+//true
+color.length//削除しても配列の長さには影響しない
+
+//3
+//配列の一部ではなくなります
+if(1 in color){console.log('実行されてます')}
+//出力されない(1との違いに注意してください)
+
+//
+function Foo(){}
+Foo.prototype.bar = 42;
+let foo = new Foo();
+delete foo.bar;
+//true
+
+//trueを返すがプロトタイプから継承してオブジェクトに存在するプロパティは削除できない
+foo.bar
+//42
+
+//プロトタイプ上でプロパティを削除
+delete foo.prototype.bar;
+foo.bar 
+//undefined
+問11
+
+let arry =[
+  {id:1,name:'morita'},
+  {id:2,name:'kenji'},
+  {id:4,name:'uro'},
+  {id:3,name:'ken'}
+  ];
+をid番号が若い順にソートしたオブジェクトを含む配列を出力してください
+
+let arry =[
+  {id:1,name:'morita'},
+  {id:2,name:'kenji'},
+  {id:4,name:'uro'},
+  {id:3,name:'ken'}
+];
+arry.sort(function(a,b){
+ return a.id > b.id
+})
+
+//先に位置させたい時はaが'正'をになるように返します
+
+//other
+arry.sort(function(a,b){
+ if(a.id > b.id) return 1;
+ if(a.id < b.id) return -1;
+});
+
+/*
+[
+  {id:1, name:'morita'},
+  {id:2, name:'kenji'},
+  {id:3, name:'ken'},
+  {id:4, name:'uro'}
+]
+*/
+問12
+
+a, bの変数はデフォルトとしてaは5、bは7を持ち、aに1を代入してconsole出力してください。
+
+const [a=5, b=7] = [1];
+console.log(a, b);
+//1 7
+
+//other
+const {a = 5, b = 7} = {a: 1}
+問13
+
+next()を実行しただけ返り値が1増える関数を定義してください
+
+const setUp = function(){
+  let count = 0;
+  return function(){
+return (count += 1);
+  }
+};
+const next = setUp();
+next();//1
+next();//2
+next();//3
+問14
+
+fun(1,2,3)を実行したら引数が全て配列で返る関数funを定義しなさい 参照
+
+function fun(){
+ return Array.from(arguments)
+}
+fun(1,2,3)//[1.2,3]
+
+//other
+function fun (...arg){
+  return arg;
+}
+fun(1,2,3)
+//[1,2,3]
+問15
+
+配列
+
+const array = ['a1','a2','a3','a4','a5']
+の0〜2番目の要素をそれぞれ
+
+red, green, yellow
+に置き換えて配列にしてください。また実行した際の返り値を教えてください
+
+const array = ['a1','a2','a3','a4','a5']
+//インデックス0から2つの要素を削除
+array.splice(0,2, 'red', 'green','yellow');
+//["a1", "a2"]
+
+//返り値:['a1', 'a2']
+array
+//['green', 'red', 'yellow', 'a3', 'a4', 'a5']
+問16
+
+const array = ['a1','a2','a3','a4','a5']
+のインデックス2〜4の要素を取り出し、 配列として出力しなさい。 実行された後のarrayの要素を教えてください
+
+const array = ['a1','a2','a3','a4','a5']
+const newArray = array.slice(1,4);
+newArray
+//['a2', 'a3', 'a4']
+array
+//['a1','a2','a3','a4','a5']
+問17
+
+const array = ['a1','a2','a3','a4','a5']
+の全ての要素を"/"で結合した文字列を出力し、さらにその文字列を'/'区切りで配列に直してください
+
+const array = ['a1','a2','a3','a4','a5']
+array.join('/').split('/');
+問18
+
+配列['おはよう','こんにちは','おやすみなさい']の要素がランダムに出力される関数を書いてください。(配列に要素が追加される事を仮定してたものにしてください)
+
+const array = ['おはよう','こんにちは','おやすみなさい'];
+const greeting = array[Math.floor(Math.random() * array.length)]
+greeting
+//おはよう or こんにちは or おやすみなさい
+問19
+
+Object.createで空のオブジェクトを作成し、値が1のプロパティpを出力してください
+
+const obj = Object.create({}, {p: {value: 1}});
+obj.p //1
+問20
+
+コンストラクタWhoの初期化時に'morita'(String)を渡しインスタンスプロパティnameに代入、 インスタンスメソッドgetNameの返り値がWho.prototype.name値になるいわゆる「classのようなもの」を作成してください ※インスタンスメソッドはprototypeに代入してください
+
+function Who(name){
+ this.name = name;
+};
+Who.prototype.getName = function(){
+ console.log('Myname is ' + this.name);
+};
+let o = new Who('morita');
+o.getName()
+問21
+
+浅いコピー(shallow copy)と深いコピー(deep copy)の違いを説明してください
+
+//**shallow copy**
+//プロパティ値や要素値だけのコピーでその先の参照まではコピーしない
+//例
+let arr = [{x : 2}];//オブジェクト参照をもつ配列
+let arr2 = [].concat(arr);//要素をコピー
+arr2[0].x = 123;//変数arr2から見える要素の参照先オブジェクトを変更。
+arr[0].x//変数arrから変更が見える(shallowだから)
+//123
+
+//**deep copy**
+//コピー元とコピー先が別のオブジェクトを参照していること。プロパティが別のオブジェクトを参照していれば参照崎のオブジェクトも含めてコピーします。deepcopyが必要な場面はない。自分で実装する必要がある。パーフェクトP199
+問21
+
+下記
+
+let array = ['e','a','k','B','c'];
+array.sort();
+を実行した結果を答えてください
+
+['B', 'a', 'c', 'e', 'k']
+
+//note 順番は文字エンコーディングによって決まる
+//要素に数値があった場合文字列に置き換えられる
+問22
+
+上記の配列を大文字小文字区別なく順番通りにしてください。期待する値['a','B','c', 'e','k']
+
+let array = ['e','a','k','B','c'];
+array.sort(function(a,b){
+ return a.toUpperCase() > b.toUpperCase() ? 1 : -1 ;
+});
+
+//['a', 'B', 'c', 'e', 'k']
+問23
+
+このような[20,100,3,35,0]
+
+比較する配列の要素が数値の場合、「降順」にsortしてください 期待する結果[100, 35, 20, 3, 0]
+
+let numArray = [20,100,3,35,0];
+numArray.sort(function(a,b){
+ return b - a;
+});
+[100, 35, 20, 3, 0]
+
+//昇順の場合
+return a - b
+問24
+
+文字列 '10'をNumber型にし、型判定し、数値かどうか評価後、文字列に変換してください
+
+let a = +'10';
+typeof a
+//number
+isNaN(a);
+//false
+a.toString();
+//'10'
+
+//other
+let a = parseInt('10', 10);
+問25
+
+カーリー化されたadd(1)(2)もしくはadd(1,2) を実行した際両方とも返り値3になる関数を定義しなさい。p85
+
+function add(x, y){
+ if(typeof y == 'undefined'){//部分適用
+  return function(y){
+return x + y
+  }
+ }
+ //完全適用
+ return x + y
+}
+add(1)(2) //3
+add(1,2) //3
+問26
+
+クロージャーを使ったファクトリー関数。
+
+var fafa = Factory('morita');
+fafa.introduce()
+//'morita'
+上記のような実行をしたら渡したname(ここではmorita)が表示されるメソッドintroduceを持つファクトリー関数を定義しなさい。
+
+function Factory(name){
+ function getName(){
+  return name;
+ };
+ return {
+  introduce : function(){
+    console.log(getName());
+   }
+ }
+};
+const fafa = Factory('morita');
+fafa.introduce()
+//morita
+問27 関数sayHiに自分の名前を引数で渡した際にhello!yourname、何も渡さない場合hello! と返す関数を作成し、それをapplyで実行してください。また applyの第一引数にnullを渡す場合とオブジェクトを渡す場合のそれぞれのthisは何を指しますか答えてください p83
+
+let sayHi = function(name){
+ return 'hello!' + (name ? name : '');
+};
+sayHi('kenji');
+sayHi();
+sayHi.apply(null,['kenji']);//関数呼び出し
+let greeting = {
+  sayHi: function(name){
+    return 'hello!' + (name ? name : '');
+  }
+};
+//メソッド呼び出し
+greeting.sayHi.apply(greeting,['kenji']);//渡す
+greeting.sayHi.apply(greeting);//渡さない
+
+
+//関数呼び出しの場合thisはwindowを指し、nullを渡す、
+//メソッド呼び出しの場合thisはオブジェクトを指しオブジェクトの参照を渡す
+問28
+
+let obj = {x : 2, y: 3};
+このobjをプロパティ追加不可、削除変更は可能にし、プロパティ追加不可か否かの判定メソッドでtrueが返る事を確認した後、objのkeyを列挙してください。
+
+let obj = {x : 2, y: 3};
+Object.preventExtensions(obj);
+Objcet.isExtensible(obj);//true
+Object.key(obj);
+//['x', 'y']
+問29
+
+こちらlet obj = {} と等価をObjctメソッドで生成してください
+
+let obj = Object.create(Object.prototype);
+問30
+
+こちら
+
+let obj = {x : 2, y: 3}
+と等価をObjectメソッドで生成してください
+
+let obj = Object.create(Object.prototype, {
+   x : {value: 2, writable: true, enumerable: true, configurable: true},
+   y : {value: 3, writable: true, enumerable: true, configurable: true}
+})
+問31
+
+こちら
+
+const obj = { x : 2}
+の属性を出力してください
+
+Object.getOwnPropertyDescriptor(obj, 'x');
+// {
+//  configurable: false,
+//  enumerable: false,
+//  value: 2,
+//  writable: false
+//.fseventsd/}
+問31
+
+こちら var obj2 = {x : 2};にObjectメソッドを用いてプロパティy、値2、プロパティ追加可能を定義して、Objectメソッドで情報(値と属性)を返してくださいP149
+
+let obj2 = {x : 2};
+Object.defineProperty(obj2, 'y', {value: 3, enumerable: true});
+//[object Object] {
+//  x: 2,
+//  y: 3
+//}
+
+Object.getOwnPropertyDescriptor(obj2, 'y')
+// {
+//  configurable: false,
+//  enumerable: true,
+//  value: 3,
+//  writable: false
+//}
+問32
+
+実引数の数を出力、第一引数を出力する関数fを実行してください
+
+function f(){
+ console.log(arguments.length)
+ console.log(arguments[0])
+}
+f(2)
+//1
+//2
+問33
+
+let arr = ['2','23','0','16'];
+を小さい順にソートしてください。その後ソートをできないようにread-onlyにしてください
+
+let arr = ['2','23','0','16'];
+arr.sort(function(a,b){ return a - b ;});
+//['0', '2', '16', '23']
+Object.freeze(arr);
+//['0', '2', '16', '23']
+arr.sort();
+//.fseventsd/'Cannot assign to read only property '1' of [object Array]'
+問34
+
+var arr = [3,4,5];をconcat以外で新たな配列としてarr2にコピーしてください。その後arr2[0]= 123を代入するとarrは何を出力するか答えなさい
+
+let arr = [3,4,5];
+let arr2 = arr.slice(0, arr.length);
+arr2
+//[3, 4, 5]
+arr2[0] = 123;
+arr
+//[3, 4, 5]//変数arrから変更は見えない(要素をコピーしているから)
+arr2
+//[123, 4, 5]
+
+
+//別解
+
+let arr2 = arr.map(ele => ele);
+arr2
+//[3, 4, 5]
+問35
+
+こちらは2つのパラメーターを足して返すgetSum関数です。
+
+const getSum = (a, b) => a + b
+このパラメーターに何もわたってこなかった場合Errorをスローすようにしてください 期待する結果 getSum(10) //throws b is not defined getSum(undefined, 10) //throws a is not defined
+
+const _err = function(message) {
+    throw new Error(message);
+}
+const getSum = (a = _err('a is not defined'), b = _err('b is not defined'))=> a + b
+getSum(10) //throws b is not defined
+getSum(undefined, 10) //throws a is not defined
+
+getSum(10, 20);
+//30
+問36 strict modeの代表的な制約を挙げて説明してください。
+
+- 暗黙のグローバル変数の禁止
+(標準モードではvarを伴わず変数に値を割り当てると現在のスコープに関係なくグローバルオブジェクトにその名前のプロパティを追加してしまう。strictモードでは明示的にエラーになる)
+- 関数内でthis参照がグローバルオブジェクトを参照しない
+
+- NaN、Infinity、undefinedのグローバル変数を読み込み専用
+
+- 重複のプロパティ名とパラメータ名を禁止
+
+リテラルでのオブジェクト生成時同じ名前を持つプロパティを複数定義する場合や、関数に同じ名前を持つパラメータを複数与える場合標準モードでは後に定義されたものが優先されますがstrictモードではこのようなコードを実行する際にエラーが発生します。
+'use strict';
+
+//オブジェクト生成時にエラー//標準モードで実行する場合は後に定義されたものが反映される
+
+var object = {
+  prop1 : 100,
+  prop1 : 200
+}
+
+//関数定義字にエラー発生
+
+function func(val, val){
+  console.log(val);
+}
+func(1, 2);
+//2
+
+
+パラメータとargumentsがそれぞれ独立
+。
+標準モードでは関数にパラメータを設定している場合、関数本体におけるパラメータの名前を持つ変数はパラメータの一にあるargumentsオブジェクトの要素のエイリアスとして定義されていました
+。つまり最初のパラメータとargument[0]は、名前は異なるものの、その実体は同じものでした。
+strictモードではこれが変更されパラメータとargumentsは独立した存在として扱われるようになり、それぞれ個別の引数が割り当てられます。
+(function (param){
+  'use strict';
+  //引数がプリミティブ型の場合はStrictモードと標準モードで動作がことなる。
+
+  pram = 'param';
+  console.log(param, arguments[0]);
+  //'param'
+  //(標準モードの場合)
+  'param' 'param'
+
+  arguments[0] = 'arg';
+  console.log(param, arguments[0]);
+  //'param' 'arg';
+  //標準モードの場合 'arg' 'arg'
+  })('引数') //関数に文字列を渡して実行
+
+但し、引数がオブジェクトの場合はパラメータとargumentsに同じオブジェクトへの参照が格納されるためプロパティへのアクセスは事実上同じものへのアクセスとなります。
+
+arguments オブジェクトへの値の割り当ての禁止
+
+関数実行時に与えられた引数はarguments変数に格納されます。Strictモードではこのargumentsオブジェクトに別の新たなオブジェクトを割り当てることができません。
+'use strict';
+
+//arguments変数を別の値で置き換えることができない
+
+(function(){
+  //SyntaxErrorが発生
+
+  arguments = [100, 200, 300];//別の値でまるまる置き換えている。。
+
+  })();
+
+  //argumentsへの要素の追加や変更は可能
+
+  (function(){
+    //要素の置き換え
+    arguments[0] = 200;
+    要素の追加
+    arguments[1] = 300;
+    console.log(arguments[0], arguments[1]);
+    //200, 300
+    })()
+
+    - arguments.calleeアクセスの禁止
+
+再帰などの目的で関数内でその関数自身にアクセスする必要がある場合にはarguments.calleeではなく、関数名を使って呼び出します。関数式を使用する場合は無名関数にするのではなく、その関数に名前を与えておく必要があります。
+8進数リテラルの禁止
+
+'use strict';
+//8進数リテラルを使用するとsyntaxError
+//標準モードで実行する場合はあoctに数値8が割り当てられる。
+var oct = 010;
+
+- Functionオブジェクトのcallerプロパティのアクセス禁止
+
+ブロック内の関数分の禁止
+
+
+'use strict';
+//ブロック内部の関数宣言はsyntaxError
+if(true) {
+  function func(val){return  val;}
+}
+
+//ブロック内部での関数式の定義は問題なし
+
+if(true){
+  val fun = function(val) {return val};
+}
+
+
+delateによる変数や関数の削除の禁止
+
+標準モードでは演算対象が削除できない変数や関数であっても暗黙的に失敗していた。strictモードではエラーを発生させる。Configurable属性にfalseが設定されている再設定不可プロパティの削除時もエラーが発生します。
+
+- with文の禁止
+使用するとSyntaxErrorが発生する
+
+- evalが新しいシンボルを作らない
+-
+evalコードが独自のスコープで動作する。標準モードでevalに文字列を渡してコードを実行するとそのコードは呼び出しているスコープ上で動作する。つまりevalの実行中に宣言された変数は呼び出したスコープに定義される。
+
+strictモードではevalで実行されるコードが自身のスコープを持ちます。このスコープから外側のスコープにある変数にはアクセスできますが外側のスコープに変数を定義することはできません。関数スコープと同じです。
+
+
+//'use strict'は複数のstrictモード記述のあるjsファイルの結合されて本番のファイルを構成している場合先頭のファイルの先頭部に置いた'use strict'文によって結合されたスクリプト全体がstrictモードになりその結果コードが誤作動するという事例があった。
+ある関数がstrictモードで動作するかの判定は呼び出し時のスコープではなく、定義されたスコープで行われる。Strictモードのコード内で呼び出しても標準モードで定義された関数は標準モードで実行される。argumentsとevalを使っているか？使っていたらそこがstrictモードかどうかを確認しましょう。※scriptタグはタグ単位でスクリプトの実行環境を生成する。そのため<script>タグごとにモードの選択をする。Strictモード内で<script>タグを動的に生成する場合も新しく生成されたタグ内のScriptは指示序文を与えなければ標準モードで動作します。node.jsのrequire()で呼び出すコードは呼び出し元の指示序文に影響されません。strictでも呼び出すコードのコンテクストが標準モードならそのコードは標準モードで動作する
+
+//strictモードの即時実行関数
+
+(function(){
+  'use strict';
+  //loose関数の中身はStrictモードではエラーが発生するコード
+  loose();
+  })()
+  function loose(){
+    //varを忘れて、8進数リテラルを使用
+    a = 010;
+  }
+
+  //loose関数は標準モードで動作するため、aがグローバルオブジェクトのプロパティとして追加されている
+  console.log(a);
+  //8
+
+//thisの値にnullやundefinedが競ってされていた場合標準モードではthisはこれらの代わりにグローバルオブジェクトを参照する。strictモードではこの強制的な変換は行われずthisにはそれぞれの値がそのまま格納される。this値にプリミティブ値が競ってされた場合標準モードではそのthisはプリミティブ値の型に対応するプリミティブラッパー型オブジェクトを参照するがstrictはこの型変換もしない。
+問37 for in文に関する注意点を3つ挙げてください
+
+- プロパティを列挙する順序がオブジェクトリテラルと配列リテラルで違う
+- 列挙できないプロパティがある(Array.lengthなど)
+- プロトタイプ継承したプロパティも列挙する
+問38
+
+DOM上にあるdivをnodeListに変換して配列に格納してください
+
+const nodelist = [...document.querySelectorAll('div')];
+問39 配列var arr = ['f','o','x','k'];をインデックス順に出力させてください
+
+var arr = ['f','o','x','k'];
+for(var j of arr){
+console.log(j)
+}
+
+
+//別解
+
+var arr = ['f','o','x','k'];
+arr.forEach(function(ele){
+ console.log(ele);
+ }
+)
+問40 またイテレーターを使い順番に出力してください
+
+var arr = ['f', 'o', 'x', 'k'];
+var eArr = arr[Symbol.iterator]();
+eArr.next().value //f
+eArr.next().value //o
+eArr.next().value //x
+eArr.next().value //k
+問41
+
+配列['a', 'b', 'c', 'd', 'e'] のインデックス2番目に'morita'という要素を加えなさい。期待する結果['a', 'b','morita', 'c', 'd', 'e']
+
+var arry = ['a', 'b', 'c', 'd', 'e'];
+arry.splice(2, 0 , 'morita');
+arry
+//['a', 'b','morita', 'c', 'd', 'e']
+問42 これvar o = {};と同じ意味を持つコードをObjectのAPIを使って生成してください
+
+var o = Object.create(Object.prototype);
+問43 {p: 42}となるようなオブジェクトをObjectメンバを使って生成してください
+
+o = Object.create({}, {p: {value : 42}});
+問44
+
+1234という数字を文字列に変更後、配列の要素としてインデックス順に格納してください
+
+var count = 1234;
+var ee = count.toString();
+var arr = [];
+for(var i = 0; i < ee.length; i++){
+ arr[i] = ee.charAt(i);
+}
+console.log(arr)//['1','2','3','4'];
+問45
+
+こちらは要素が2だったらループを抜けたいのだが期待どうり動かない 期待する出力 //0, 1
+
+[0, 1, 2, 3, 4].forEach(function(val, i) {
+  if (val === 2) {
+    // how do we stop?
+    return true;
+  }
+  console.log(val);
+});
+// 0, 1, 3, 4
+期待通りになるようにしてください
+
+//use some
+[0, 1, 2, 3, 4].some(function(val, i) {
+  if (val === 2) {
+    return true;
+  }
+  console.log(val); // your code
+});
+//0, 1
+
+//use for
+const a = [0, 1, 2, 3, 4];
+for (var i = 0; i < a.length; i++) {
+  if (a[i] === 2) {
+    break; // stop the loop
+  }
+  console.log(a[i]);
+}
+//0, 1
+問46
+
+var Speaker = {
+ say : function(wordsGetter){
+  var words = wordsGetter();
+   alert(words);
+ }
+};
+function Person(nickname){
+ this.nickname = nickname;
+}
+
+Person.prototype.sayName = function(){
+    self = this;
+    Speaker.say(function(){
+      return self.nickname;
+    });
+};
+var person = new Person('moriken');
+
+person.sayName();
+答え2
+
+var Speaker = {
+ say : function(wordsGetter){
+  var words = wordsGetter();
+   alert(words);
+ }
+};
+function Person(nickname){
+ this.nickname = nickname;
+}
+
+Person.prototype.sayName = function(){
+    Speaker.say(function(){
+      return this.nickname;
+    }.bind(this));
+};
+var person = new Person('moriken');
+
+person.sayName();
+問47
+
+下記のような
+
+array = [
+{name: 'kenji', mail:'fafa@eee.com'},
+{name: 'morita', mail: 'kkk@faf.com'}
+]
+配列内にある連想配列のkeyとmail値を配列に格納して出力してください
+
+array = [
+{name: 'kenji', mail:'fafa@eee.com'},
+{name: 'morita', mail: 'kkk@faf.com'}
+];
+var array2 = [];
+array.forEach(function(Element, ind, array){
+   for(var key in Element){
+    if(key == 'mail'){
+
+  array2.push(Element[key])
+  }
+ }
+})
+console.log(array2);
+問48 配列var passed = [12, 5, 8, 130, 44]の要素全てが10以上かどうかを評価してtrueかfalseを返してください。また10以上のものが一つでもあった場合trueを返してください。
+
+function isBigEnough(ele, ind, arry){
+ return (ele >= 10);
+};
+const passed = [12, 5, 8, 130, 44].every(isBigEnough);
+passed //false
+問49 二次元配列
+
+[['one', 'info@fa'],['two', 'send@fafa'],['three', 'hoso@fafa']
+];
+の'two'の値を取得してください
+
+const fafa = [['one', 'info@fa'],['two', 'send@fafa'],['three', 'hoso@fafa']
+];
+const map = new Map(fafa);
+map.get('two');
+//'send@fafa'
+問50 問49の変数fafaにインデックス3番目の要素として['four',fafa@eee]の配列を追加してください
+
+const fafa = [['one', 'info@fa'],['two', 'send@fafa'],['three', 'hoso@fafa']
+];
+const map = new Map(fafa);
+map.set('four', 'fafa@eee');
